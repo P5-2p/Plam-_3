@@ -1,0 +1,325 @@
+{
+    "app-id": "com.obsproject.Studio",
+    "default-branch": "stable",
+    "runtime": "org.kde.Platform",
+    "runtime-version": "5.15",
+    "sdk": "org.kde.Sdk",
+    "command": "obs",
+    "finish-args": [
+        "--socket=x11",
+        "--socket=wayland",
+        "--socket=pulseaudio",
+        "--device=all",
+        "--share=network",
+        "--share=ipc",
+        "--filesystem=host",
+        "--filesystem=xdg-run/pipewire-0",
+        "--talk-name=org.kde.StatusNotifierWatcher",
+        "--talk-name=org.freedesktop.Flatpak",
+        "--talk-name=org.freedesktop.ScreenSaver",
+        "--talk-name=org.freedesktop.PowerManagement.Inhibit",
+        "--talk-name=org.freedesktop.Notifications",
+        "--talk-name=org.mate.SessionManager",
+        "--talk-name=org.gnome.SessionManager",
+        "--own-name=org.kde.StatusNotifierItem-2-2",
+        "--system-talk-name=org.freedesktop.Avahi",
+        "--env=VST_PATH=/app/extensions/Plugins/lxvst"
+    ],
+    "add-extensions": {
+        "com.obsproject.Studio.Plugin": {
+            "directory": "plugins",
+            "subdirectories": true,
+            "add-ld-path": "lib",
+            "merge-dirs": "lib/obs-plugins;share/obs/obs-plugins",
+            "no-autodownload": true,
+            "autodelete": true
+        },
+        "com.obsproject.Studio.BlackMagicLibs": {
+            "directory": "lib/blackmagic",
+            "add-ld-path": ".",
+            "no-autodownload": true,
+            "autodelete": true
+        },
+        "com.obsproject.Studio.NDI": {
+            "directory": "lib/ndi",
+            "add-ld-path": ".",
+            "no-autodownload": true,
+            "autodelete": true
+        },
+        "com.obsproject.Studio.V4L2Sink": {
+            "directory": "lib/v4l2sink",
+            "add-ld-path": ".",
+            "no-autodownload": true,
+            "autodelete": true
+        },
+        "org.freedesktop.LinuxAudio.Plugins": {
+            "directory": "extensions/Plugins",
+            "version": "20.08",
+            "add-ld-path": "lib",
+            "merge-dirs": "lxvst",
+            "subdirectories": true,
+            "no-autodownload": true
+        }
+    },
+    "cleanup": [
+        "/lib/pkgconfig",
+        "/share/man",
+        "*.la"
+    ],
+    "modules": [
+        "shared-modules/linux-audio/jack2.json",
+        {
+            "name": "x264",
+            "config-opts": [
+                "--disable-cli",
+                "--enable-shared"
+            ],
+            "cleanup": [
+                "/include"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://code.videolan.org/videolan/x264.git",
+                    "branch": "master",
+                    "commit": "93fe0a1f2372140f1925a1af5b734151c21f992d"
+                }
+            ]
+        },
+        {
+            "name": "v4l-utils",
+            "config-opts": [
+                "--disable-static",
+                "--disable-doxygen-doc",
+                "--disable-libdvbv5",
+                "--disable-v4l-utils",
+                "--disable-qv4l2",
+                "--with-udevdir=/app/lib/udev/"
+            ],
+            "cleanup": [
+                "/include"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://linuxtv.org/downloads/v4l-utils/v4l-utils-1.20.0.tar.bz2",
+                    "sha256": "956118713f7ccb405c55c7088a6a2490c32d54300dd9a30d8d5008c28d3726f7",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 9998,
+                        "url-template": "https://linuxtv.org/downloads/v4l-utils/v4l-utils-$version.tar.bz2"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "nv-codec-headers",
+            "no-autogen": true,
+            "make-install-args": [
+                "PREFIX=/app"
+            ],
+            "cleanup": [
+                "*"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://git.videolan.org/git/ffmpeg/nv-codec-headers.git",
+                    "commit": "b641a195edbe3ac9788e681e22c2e2fad8aacddb",
+                    "tag": "n11.1.5.0",
+                    "x-checker-data": {
+                        "type": "git",
+                        "tag-pattern": "^n([\\d.]+)$"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "srt",
+            "buildsystem": "cmake-ninja",
+            "config-opts": [
+                "-DENABLE_STATIC=OFF",
+                "-DENABLE_APPS=OFF",
+                "-DENABLE_LOGGING=OFF"
+            ],
+            "cleanup": [
+                "/include",
+                "/bin"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/Haivision/srt.git",
+                    "tag": "v1.4.3",
+                    "commit": "291e010fbf91b13b92e1cde5dcb824a9d7f4e353",
+                    "x-checker-data": {
+                        "type": "git",
+                        "tag-pattern": "^v([\\d.]+)$"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "ffmpeg",
+            "config-opts": [
+                "--enable-gpl",
+                "--enable-shared",
+                "--disable-static",
+                "--enable-gnutls",
+                "--disable-doc",
+                "--disable-programs",
+                "--disable-devices",
+                "--enable-libopus",
+                "--enable-libvpx",
+                "--enable-libvorbis",
+                "--enable-libx264",
+                "--enable-nvenc",
+                "--enable-libsrt"
+            ],
+            "cleanup": [
+                "/share/ffmpeg",
+                "/include"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://www.ffmpeg.org/releases/ffmpeg-4.3.2.tar.xz",
+                    "sha256": "46e4e64f1dd0233cbc0934b9f1c0da676008cad34725113fb7f802cfa84ccddb"
+                }
+            ]
+        },
+        {
+            "name": "luajit",
+            "no-autogen": true,
+            "cleanup": [
+                "/bin",
+                "/include"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://luajit.org/git/luajit-2.0.git",
+                    "branch": "v2.1",
+                    "disable-shallow-clone": true
+                },
+                {
+                    "type": "shell",
+                    "commands": [
+                        "sed -i 's|/usr/local|/app|' ./Makefile"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "swig",
+            "config-opts": [
+                "--without-boost",
+                "--without-pcre",
+                "--without-alllang",
+                "--with-lua=/app/bin/luajit-2.1.0-beta3",
+                "--with-luaincl=/app/include/luajit-2.1",
+                "--with-python3"
+            ],
+            "cleanup": [
+                "*"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://prdownloads.sourceforge.net/swig/swig-4.0.2.tar.gz",
+                    "sha256": "d53be9730d8d58a16bf0cbd1f8ac0c0c3e1090573168bfa151b01eb47fa906fc",
+                    "x-checker-data": {
+                        "type": "anitya",
+                        "project-id": 4919,
+                        "url-template": "https://prdownloads.sourceforge.net/swig/swig-$version.tar.gz"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "mbedtls",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_POSITION_INDEPENDENT_CODE=ON",
+                "-DUSE_SHARED_MBEDTLS_LIBRARY=ON",
+                "-DUSE_STATIC_MBEDTLS_LIBRARY=OFF",
+                "-DENABLE_TESTING=OFF",
+                "-DENABLE_PROGRAMS=OFF"
+            ],
+            "cleanup": [
+                "/include"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/ARMmbed/mbedtls.git",
+                    "commit": "1c54b5410fd48d6bcada97e30cac417c5c7eea67",
+                    "tag": "v2.25.0"
+                }
+            ]
+        },
+        {
+            "name": "cef",
+            "buildsystem": "cmake-ninja",
+            "no-make-install": true,
+            "make-args": [
+                "libcef_dll_wrapper"
+            ],
+            "build-commands": [
+                "mkdir -p /app/cef/libcef_dll_wrapper",
+                "cp -R ./include /app/cef",
+                "cp -R ./Release /app/cef",
+                "cp -R ./Resources /app/cef",
+                "cp -R ./libcef_dll_wrapper/libcef_dll_wrapper.a /app/cef/libcef_dll_wrapper"
+            ],
+            "cleanup": [
+                "*.a",
+                "./*"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://cdn-fastly.obsproject.com/downloads/cef_binary_4280_linux64.tar.bz2",
+                    "sha256": "d91c78349ecbfbfdfc18d5f882dc28b939028f1a631191c603b5d0d938ada972"
+                }
+            ]
+        },
+        {
+            "name": "obs",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DENABLE_WAYLAND=ON",
+                "-DBUILD_BROWSER=ON",
+                "-DCEF_ROOT_DIR=/app/cef",
+                "-DUNIX_STRUCTURE=ON",
+                "-DUSE_XDG=ON",
+                "-DDISABLE_ALSA=ON",
+                "-DENABLE_PULSEAUDIO=ON",
+                "-DENABLE_PIPEWIRE=ON",
+                "-DWITH_RTMPS=ON",
+                "-DOBS_VERSION_OVERRIDE=27.1.0"
+            ],
+            "post-install": [
+                "install -d /app/plugins",
+                "install -d /app/extensions/Plugins",
+                "install -d /app/lib/blackmagic /app/lib/ndi /app/lib/v4l2sink",
+                "ln -s /app/lib/ndi/obs-ndi.so /app/lib/obs-plugins/obs-ndi.so",
+                "mkdir -p /app/share/obs/obs-plugins/obs-ndi",
+                "ln -s /app/lib/ndi/locale /app/share/obs/obs-plugins/obs-ndi/locale",
+                "ln -s /app/lib/v4l2sink/v4l2sink.so /app/lib/obs-plugins/obs-v4l2sink.so"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/obsproject/obs-studio.git",
+                    "tag": "27.1.0",
+                    "commit": "698ed548700790294da579e20553e8af0e23d51d"
+                }
+            ]
+        }
+    ]
+}
