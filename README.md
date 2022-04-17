@@ -1,0 +1,1 @@
+Please see the [wiki](https://github.com/flathub/com.obsproject.Studio/wiki) for extra configuration such as [BlackMagic](https://github.com/flathub/com.obsproject.Studio/wiki/BlackMagic-Support) or [NVENC](https://github.com/flathub/com.obsproject.Studio/wiki/NVENC-Support) support.
